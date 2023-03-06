@@ -24,11 +24,3 @@ jobs:
     - name: Run Blacklight Collector
       run: |
         node example.js
-    
-    - name: Upload results as artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: ${{ github.event.inputs.url }}
-        path: ${{ github.event.inputs.url }}
-        # default 90 seems unnecessary for these test results
-        retention-days: 14
