@@ -9,6 +9,7 @@ const { join } = require("path");
 
   // The URL to test
   const URL = process.argv[2];
+  console.log(URL)
   const inUrl = URL.startsWith("http") ? URL : `http://${URL}`;
 
   const defaultConfig = {
