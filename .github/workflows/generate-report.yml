@@ -24,13 +24,11 @@ jobs:
     - name: Run Blacklight Collector
       run: |
         node example.js
-        mv ./blacklight-data ./${{ github.event.inputs.url }}
-        tar -czvf ${GITHUB_WORKSPACE}/${{ github.event.inputs.url }}.tar.gz ./${{ github.event.inputs.url }}
     
     - name: Upload results as artifact
       uses: actions/upload-artifact@v2
       with:
         name: ${{ github.event.inputs.url }}
-        path: ${{ github.event.inputs.url }}.tar.gz
+        path: ${{ github.event.inputs.url }}
         # default 90 seems unnecessary for these test results
         retention-days: 14
