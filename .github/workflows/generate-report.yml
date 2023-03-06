@@ -27,7 +27,7 @@ jobs:
 
     - name: Run Blacklight Collector
       run: |
-        node example.js url=${{ github.event.inputs.url }}
+        node example.js ${{ github.event.inputs.url }}
         
     - name: Store Report
       uses: actions/upload-artifact@v2
