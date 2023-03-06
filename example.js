@@ -8,10 +8,11 @@ const { join } = require("path");
   let OUT_DIR = true;
 
   // The URL to test
-  const URL = "example.com";
+  const URL = "${{ github.event.inputs.url }}";
+  const inUrl = URL.startsWith("http") ? URL : `http://${URL}`;
 
   const defaultConfig = {
-    inUrl: `http://${URL}`,
+    inUrl,
     numPages: 3,
     headless: true,
     emulateDevice: EMULATE_DEVICE,
@@ -19,12 +20,12 @@ const { join } = require("path");
 
   const result = await collector(
     OUT_DIR
-      ? { ...defaultConfig, ...{ outDir: join(__dirname, "demo-dir") } }
+      ? { ...defaultConfig, ...{ outDir: join(__dirname, URL) } }
       : defaultConfig
   );
   if (OUT_DIR) {
     console.log(
-      `For captured data please look in ${join(__dirname, "demo-dir")}`
+      `For captured data please look in ${join(__dirname, URL)}`
     );
   }
 })();
