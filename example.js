@@ -11,6 +11,9 @@ const { join } = require("path");
   const URL = process.argv[2];
   console.log('the url: ${URL}')
   const inUrl = URL.startsWith("http") ? URL : `http://${URL}`;
+  const cleanUrl = URL.replace("https://", "").replace("http://", "")
+    if cleanUrl.endswith("/"):
+        cleanUrl = cleanUrl[:-1]
 
   const defaultConfig = {
     inUrl,
@@ -19,15 +22,15 @@ const { join } = require("path");
     emulateDevice: EMULATE_DEVICE,
   };
   
-  console.log(`For fake captured data please look in ${join(__dirname, URL)}`)
+  console.log(`For fake captured data please look in ${join(__dirname, cleanUrl)}`)
   const result = await collector(
     OUT_DIR
-      ? { ...defaultConfig, ...{ outDir: join(__dirname, URL) } }
+      ? { ...defaultConfig, ...{ outDir: join(__dirname, cleanUrl) } }
       : defaultConfig
   );
   if (OUT_DIR) {
     console.log(
-      `For captured data please look in ${join(__dirname, URL)}`
+      `For captured data please look in ${join(__dirname, cleanUrl)}`
     );
   }
 })();
