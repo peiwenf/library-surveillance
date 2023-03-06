@@ -16,7 +16,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Install dependencies
-      run: npm install @themarkup/blacklight-collector
+      run: |
+        npm install @themarkup/blacklight-collector
+        npm run build
 
     - name: Run Blacklight Collector
       run: |
