@@ -19,7 +19,7 @@ const { join } = require("path");
     emulateDevice: EMULATE_DEVICE,
   };
   
-  console.log('dir: ${__dirname}')
+  console.log(`For fake captured data please look in ${join(__dirname, URL)}`)
   const result = await collector(
     OUT_DIR
       ? { ...defaultConfig, ...{ outDir: join(__dirname, URL) } }
