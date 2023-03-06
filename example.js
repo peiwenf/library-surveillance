@@ -10,10 +10,10 @@ const { join } = require("path");
   // The URL to test
   const URL = process.argv[2];
   console.log('the url: ${URL}')
-  const inUrl = URL.startsWith("http") ? URL : `http://${URL}`;
-  cleanUrl = URL.replace("https://", "").replace("http://", "")
-  if cleanUrl.endswith("/"):
-      cleanUrl = cleanUrl[:-1]
+  let cleanUrl = URL.replace("https://", "").replace("http://", "");
+  if (cleanUrl.endsWith("/")) {
+  cleanUrl = cleanUrl.slice(0, -1);
+  }
 
   const defaultConfig = {
     inUrl,
