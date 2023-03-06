@@ -9,7 +9,7 @@ const { join } = require("path");
 
   // The URL to test
   const URL = process.argv[2];
-  console.log(URL)
+  console.log('the url: ${URL}')
   const inUrl = URL.startsWith("http") ? URL : `http://${URL}`;
 
   const defaultConfig = {
@@ -18,7 +18,8 @@ const { join } = require("path");
     headless: true,
     emulateDevice: EMULATE_DEVICE,
   };
-
+  
+  console.log('dir: ${__dirname}')
   const result = await collector(
     OUT_DIR
       ? { ...defaultConfig, ...{ outDir: join(__dirname, URL) } }
