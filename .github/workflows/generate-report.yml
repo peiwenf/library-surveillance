@@ -14,16 +14,22 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-#     - name: Use Node.js 16.x
-#       uses: actions/setup-node@v2
-#       with:
-#         node-version: '16.x'
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
 
     - name: Install dependencies
       run: npm install @themarkup/blacklight-collector
       
     - name: Set up build
       run: npm run build
+      
+    - name: Get Clean URL Name
+      id: get-clean-url-name
+      run: |
+        cleaned=$(python -c 'from utils import clean_url; print(clean_url("${{ github.event.inputs.url }}"));')
+        echo "::set-output name=cleaned::$cleaned"
 
     - name: Run Blacklight Collector
       run: |
@@ -32,7 +38,7 @@ jobs:
     - name: Store Report
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ github.event.inputs.url }}
-        path: ${{ github.event.inputs.url }}
+        name: ${{ steps.get-clean-url-name.outputs.cleaned }}
+        path: ${{ steps.get-clean-url-name.outputs.cleaned }}
         # default 90 seems unnecessary for these test results
         retention-days: 14
