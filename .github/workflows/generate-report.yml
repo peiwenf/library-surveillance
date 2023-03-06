@@ -1,0 +1,33 @@
+name: Generate Report
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "URL to generate a report for."
+        required: true
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: npm install @themarkup/blacklight-collector
+
+    - name: Run Blacklight Collector
+      run: |
+        node example.js
+        mv ./blacklight-data ./${{ github.event.inputs.url }}
+        tar -czvf ${GITHUB_WORKSPACE}/${{ github.event.inputs.url }}.tar.gz ./${{ github.event.inputs.url }}
+    
+    - name: Upload results as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ github.event.inputs.url }}
+        path: ${{ github.event.inputs.url }}.tar.gz
+        # default 90 seems unnecessary for these test results
+        retention-days: 14
