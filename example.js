@@ -12,8 +12,8 @@ const { join } = require("path");
   console.log('the url: ${URL}')
   const inUrl = URL.startsWith("http") ? URL : `http://${URL}`;
   const cleanUrl = URL.replace("https://", "").replace("http://", "")
-    if cleanUrl.endswith("/"):
-        cleanUrl = cleanUrl[:-1]
+  if cleanUrl.endswith("/"):
+      cleanUrl = cleanUrl[:-1]
 
   const defaultConfig = {
     inUrl,
