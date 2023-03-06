@@ -11,7 +11,7 @@ const { join } = require("path");
   const URL = process.argv[2];
   console.log('the url: ${URL}')
   const inUrl = URL.startsWith("http") ? URL : `http://${URL}`;
-  const cleanUrl = URL.replace("https://", "").replace("http://", "")
+  let cleanUrl = URL.replace("https://", "").replace("http://", "")
   if cleanUrl.endswith("/"):
       cleanUrl = cleanUrl[:-1]
 
