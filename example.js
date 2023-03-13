@@ -9,7 +9,7 @@ const { join } = require("path");
 
   // The URL to test
   const URL = process.argv[2];
-  const inUrl = URL.startsWith("http") ? URL : `http://${URL}`;
+  const inUrl = URL.startsWith("http") ? URL : `https://${URL}`;
   
   let cleanUrl = URL.replace("https://", "").replace("http://", "");
   if (cleanUrl.endsWith("/")) {
@@ -17,7 +17,7 @@ const { join } = require("path");
   }
 
   const defaultConfig = {
-    cleanUrl,
+    inUrl,
     numPages: 3,
     headless: true,
     emulateDevice: EMULATE_DEVICE,
