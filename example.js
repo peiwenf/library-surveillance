@@ -17,7 +17,7 @@ const { join } = require("path");
   }
 
   const defaultConfig = {
-    inUrl,
+    cleanUrl,
     numPages: 3,
     headless: true,
     emulateDevice: EMULATE_DEVICE,
