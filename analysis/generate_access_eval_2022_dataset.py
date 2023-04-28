@@ -5,10 +5,6 @@ import logging
 import sys
 import traceback
 
-# import constants_2022
-# from core_2022 import combine_election_data_with_axe_results
-# from utils_2022 import unpack_data
-
 import constants_2022
 from core_2022 import combine_election_data_with_axe_results
 from utils_2022 import unpack_data
@@ -52,17 +48,11 @@ def main() -> None:
             constants_2022.ACCESS_EVAL_2022_EVALS_UNPACKED,
             clean=True,
         )
-        # post_eval_data = unpack_data(
-        #     constants.ACCESS_EVAL_2021_POST_CONTACT_EVALS_ZIP,
-        #     constants.ACCESS_EVAL_2021_POST_CONTACT_EVALS_UNPACKED,
-        #     clean=True,
-        # )
 
         # Combine
         expanded_data = combine_election_data_with_axe_results(
             constants_2022.ACCESS_EVAL_2022_ELECTION_RESULTS,
             eval_data,
-            # post_eval_data,
         )
         # Store to data dir
         expanded_data.to_csv(constants_2022.ACCESS_EVAL_2022_DATASET, index=False)

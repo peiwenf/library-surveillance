@@ -10,14 +10,14 @@ from typing import Callable, NamedTuple
 ACCESS_EVAL_2022_STUDY_REPORTS = Path(__file__).parent / "reports_2022"
 ACCESS_EVAL_2022_STUDY_DATA = Path(__file__).parent / "data_2022"
 
-ACCESS_EVAL_2022_ELECTION_RESULTS = ACCESS_EVAL_2022_STUDY_DATA / "2022-municipal-elections-cat-data.csv"
+ACCESS_EVAL_2022_ELECTION_RESULTS = ACCESS_EVAL_2022_STUDY_DATA / "total_2022_blacklight_0.9.csv"
 ACCESS_EVAL_2022_EVALS_ZIP = (
-    ACCESS_EVAL_2022_STUDY_REPORTS / "MunicipalElections.zip"
+    ACCESS_EVAL_2022_STUDY_REPORTS / "combined.zip"
 )
 
 ACCESS_EVAL_2022_EVALS_UNPACKED = Path("unpacked-eval-results")
 
-ACCESS_EVAL_2022_DATASET = ACCESS_EVAL_2022_STUDY_DATA / "2022-municipal-elections-blacklight-data1.csv"
+ACCESS_EVAL_2022_DATASET = ACCESS_EVAL_2022_STUDY_DATA / "total_2022_blacklight_0.9_google.csv"
 # ACCESS_EVAL_2022_DATASET_NA = ACCESS_EVAL_2022_STUDY_DATA / "2022-local-elections-study-data-na.csv"
 
 ###############################################################################
@@ -420,6 +420,8 @@ class DatasetFields:
     These columns have a computed field as well which is the `avg_error-type_x` for both
     pre and post.
     """
+
+    number_of_total_trackers = "number_of_total_trackers"
 
 
 class ComputedFields:
