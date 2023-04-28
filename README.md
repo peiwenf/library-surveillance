@@ -146,3 +146,6 @@ const { join } = require("path");
 
 Blacklight would not be possible without the work of [OpenWPM](https://github.com/mozilla/OpenWPM)
 and the EU-EDPS's [website evidence collector](https://github.com/EU-EDPS/website-evidence-collector)
+
+## Generate Data
+All the reports and data generated are stored in the dropbox here https://www.dropbox.com/scl/fo/hrbva0yt6fo9q6wz8a2sq/h?dl=0&rlkey=h2ivwhutxhuv3k5pqzcfl88ro
