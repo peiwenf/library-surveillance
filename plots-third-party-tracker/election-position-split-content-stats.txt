@@ -1,0 +1,1 @@
+Distributions for key content statistics gathered while scraping campaign websites. third_party_trackers mean: 18.55, std: 24.42, min: 0, max: 208. google mean: 2.07, std: 4.4, min: 0, max: 37. google_analytics mean: 2.35, std: 7.06, min: 0, max: 168. facebook mean: 1.8, std: 5.33, min: 0, max: 31. fb_pixel_events mean: 0.47, std: 1.45, min: 0, max: 12.

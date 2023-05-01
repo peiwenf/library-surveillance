@@ -18,8 +18,6 @@ ACCESS_EVAL_2022_EVALS_ZIP = (
 ACCESS_EVAL_2022_EVALS_UNPACKED = Path("unpacked-eval-results")
 
 ACCESS_EVAL_2022_DATASET = ACCESS_EVAL_2022_STUDY_DATA / "total_2022_blacklight_0.9_google.csv"
-# ACCESS_EVAL_2022_DATASET_NA = ACCESS_EVAL_2022_STUDY_DATA / "2022-local-elections-study-data-na.csv"
-
 ###############################################################################
 
 
@@ -36,15 +34,24 @@ class DatasetFields:
     Use this class as a data dictionary.
     """
 
-    location = "location"
+    state = "state"
     """
-    str: The municipality or general location where the election
-    took place.
+    str: The State where the election is held.
 
     Examples
     --------
-    - "Seattle, WA"
-    - "New Orleans, LA"
+    - "Alabama"
+    - "Arizona"
+    """
+
+    location = "location"
+    """
+    str: The District or County for the election.
+
+    Examples
+    --------
+    - "Alabama 1st"
+    - "Little Rock"
     """
 
     campaign_website_url = "campaign_website_url"
@@ -67,30 +74,41 @@ class DatasetFields:
     - "Council"
     """
 
-    # candidate_position = "candidate_position"
+    electoral_level= "electoral_level"
     """
-    str: Categorical value for if the candidate is the incumbent, a challenger, or open.
+    str: The electoral level of the race.
 
     Examples
     --------
-    - "Incumbent"
-    - "Challenger"
-    - "Open"
+    - "Federal"
+    - "State"
+    - "Special District"
+    - "County"
+    - "City"
+    - "City/County"
     """
 
-    # candidate_history = "candidate_history"
+    electoral_level_3= "electoral_level_3"
     """
-    str: Categorical value for the electoral history of the candidate.
+    str: The electoral level of the races that categorized into
+    three levels only(Federal, State, and Local).
 
     Examples
     --------
-    - "In-Office"
-    - "Previously-Elected"
-    - "Never-Held-Office"
+    - "Federal"
+    - "State"
+    - "Local"
+    """
 
-    Notes
-    -----
-    Pulled from external data source.
+    electoral_branch = "electoral_branch"
+    """
+    str: The electoral branch of the races.
+
+    Examples
+    --------
+    - "Judicial"
+    - "Legisilative"
+    - "Executive"
     """
 
     election_result = "election_result"
@@ -101,31 +119,6 @@ class DatasetFields:
     --------
     - "Won"
     - "Lost"
-
-    Notes
-    -----
-    Pulled from external data source.
-    """
-
-    # election_type = "election_type"
-    """
-    str: Categorical value for the type of election.
-
-    Examples
-    --------
-    - "Primary"
-    - "General"
-    - "Runoff"
-    """
-
-    # eligible_voting_population = "eligible_voting_population"
-    """
-    int: The total number of people eligible to vote in the election.
-
-    Examples
-    --------
-    - 123456
-    - 24680
 
     Notes
     -----
@@ -170,393 +163,64 @@ class DatasetFields:
     - 0.47
     """
 
-    # race_funding = "race_funding"
+    party = "party"
     """
-    float: The amount of money all candidates in the race received during the campaign.
+    str: The party of the candidate.
 
     Examples
     --------
-    - 10000000.00
-    - 24500000.00
-
-    Notes
-    -----
-    Pulled from external data source.
+    - "Democratic Party"
+    - "Independent"
     """
 
-    # candidate_funding = "candidate_funding"
+    competitiveness = 'competitiveness'
     """
-    float: The amount of money the candidate received in donations during the campaign.
+    float: The distance between the vote share of the candidate and 0.5
 
     Examples
     --------
-    - 100000.00
-    - 350000.00
-
-    Notes
-    -----
-    Calculated as sum of all other candidates funding in same race.
-
-    Pulled from external data. (Not all candidates had websites scraped scraped)
+    - "0.1"
+    - "0.5"
     """
-
-    # funding_share = "funding_share"
-    """
-    float: The amount of money the candidate received in donations over the amount of
-    money all candidates received during the campaign.
-
-    Examples
-    --------
-    - 0.21
-    - 0.47
-    """
-
-    # contacted = "contacted"
-    """
-    str: Was the campaign contacted with the aXe evaluation summarization.
-
-    Examples
-    --------
-    - "Contacted"
-    - "Not-Contacted"
-
-    Notes
-    -----
-    If the campaign was not contacted, the values for pre and post features are set to
-    equal.
-    """
-
-    number_of_words = "number_of_words"
-    """
-    int: The total number of words found in the whole campaign website.
-    Calculated on the latest version of the website.
-
-    Examples
-    --------
-    - 9999
-    - 12345
-    """
-
-    number_of_unique_words = "number_of_unique_words"
-    """
-    int: The total number of unique words found in the whole campaign website.
-    Calculated on the latest version of the website.
-
-    Examples
-    --------
-    - 999
-    - 1234
-    """
-
-    ease_of_reading = "ease_of_reading"
-    """
-    float: The lexical complexity of the entire website.
-    Calculated on the latest version of the website.
-
-    See: https://github.com/shivam5992/textstat#the-flesch-reading-ease-formula
-    for more information.
-
-    Examples
-    --------
-    - 123.45
-    - -12.34
-    """
-
-    number_of_pages = "number_of_pages"
-    """
-    int: The total number of pages found in the whole campaign website before contact.
-
-    Examples
-    --------
-    - 12
-    - 42
-    """
-
-    number_of_total_errors = "number_of_total_errors"
-    """
-    int: The total number of errors for the entire website before contact.
-
-    Examples
-    --------
-    - 234
-    - 450
-    """
-
-    number_of_critical_errors = "number_of_critical_errors"
-    """
-    int: The number of errors categorized as "critical" by aXe for the
-    entire website before contact.
-
-    Examples
-    --------
-    - 123
-    - 42
-    """
-
-    number_of_serious_errors = "number_of_serious_errors"
-    """
-    int: The number of errors categorized as "serious" by aXe for the
-    entire website before contact.
-
-    Examples
-    --------
-    - 123
-    - 42
-    """
-
-    number_of_moderate_errors = "number_of_moderate_errors"
-    """
-    int: The number of errors categorized as "moderate" by aXe for the
-    entire website before contact.
-
-    Examples
-    --------
-    - 123
-    - 42
-    """
-
-    number_of_minor_errors = "number_of_minor_errors"
-    """
-    int: The number of errors categorized as "minor" by aXe for the
-    entire website before contact.
-
-    Examples
-    --------
-    - 123
-    - 42
-    """
-
-    # number_of_pages_post = "number_of_pages_post"
-    """
-    int: The total number of pages found in the whole campaign website after contact.
-
-    Examples
-    --------
-    - 12
-    - 42
-    """
-
-    # number_of_total_errors_post = "number_of_total_errors_post"
-    """
-    int: The total number of errors for the entire website after contact.
-
-    Examples
-    --------
-    - 234
-    - 450
-    """
-
-    # number_of_critical_errors_post = "number_of_critical_errors_post"
-    """
-    int: The number of errors categorized as "critical" by aXe for the
-    entire website after contact.
-
-    Examples
-    --------
-    - 123
-    - 42
-    """
-
-    # number_of_serious_errors_post = "number_of_serious_errors_post"
-    """
-    int: The number of errors categorized as "serious" by aXe for the
-    entire website after contact.
-
-    Examples
-    --------
-    - 123
-    - 42
-    """
-
-    # number_of_moderate_errors_post = "number_of_moderate_errors_post"
-    """
-    int: The number of errors categorized as "moderate" by aXe for the
-    entire website after contact.
-
-    Examples
-    --------
-    - 123
-    - 42
-    """
-
-    # number_of_minor_errors_post = "number_of_minor_errors_post"
-    """
-    int: The number of errors categorized as "minor" by aXe for the
-    entire website after contact.
-
-    Examples
-    --------
-    - 123
-    - 42
-    """
-
-    # trial = "trial"
-    """
-    str: The categorical variable added when the data has been flattened
-    from "pre" and "post" having independent columns to now sharing columns.
-
-    Examples
-    --------
-    - "Pre"
-    - "Post"
-
-    Notes
-    -----
-    This is only added with the flattened data.
-    """
-
-    error_type_x = "error_type_x"
-    """
-    int: There are many columns that begin with 'error-type_'.
-    Such columns are just the aggregate value of that error type X for that campaign.
-
-    Examples
-    --------
-    - "error-type_label_pre": 12
-    - "error-type_frame-title_post": 4
-
-    Notes
-    -----
-    These columns have a computed field as well which is the `avg_error-type_x` for both
-    pre and post.
-    """
-
+    
     number_of_total_trackers = "number_of_total_trackers"
+    """
+    int: The total tracker that blacklight detects in the body of the webpage
 
+    Examples
+    --------
+    - "29"
+    - "450"
+    """
 
-class ComputedFields:
+    behaviour_event_listeners = "behaviour_event_listeners"
+    canvas_fingerprinters = "canvas_fingerprinters"
+    canvas_font_fingerprinters = "canvas_font_fingerprinters"
+    cookies = "cookies"
+    fb_pixel_events = "fb_pixel_events"
+    key_logging = "key_logging"
+    session_recorders = "session_recorders"
+    third_party_trackers = "third_party_trackers"
+    """
+    int: The count of different types of tracker that blacklight detects 
+    in the body of the webpage
 
-    # Differences
-    # diff_pages = ComputedField(
-    #     name="diff_pages",
-    #     func=lambda data: data[DatasetFields.number_of_pages_post]
-    #     - data[DatasetFields.number_of_pages_pre],
-    # )
+    Examples
+    --------
+    - "29"
+    - "300"
+    """
 
-    # diff_errors = ComputedField(
-    #     name="diff_errors",
-    #     func=lambda data: data[DatasetFields.number_of_total_errors_post]
-    #     - data[DatasetFields.number_of_total_errors_pre],
-    # )
+    google = 'google'
+    google_analytics = 'google_analytics'
+    facebook = 'facebook'
+    """
+    int: The count of specific third party trackers caclucated 
+    based on the black light result, where "google" also counts "google_analytics"
+    and "facebook" also counts "fb_pixel_events"
 
-    # diff_critical_errors = ComputedField(
-    #     name="diff_critical_errors",
-    #     func=lambda data: data[DatasetFields.number_of_critical_errors_post]
-    #     - data[DatasetFields.number_of_critical_errors_pre],
-    # )
-
-    # diff_serious_errors = ComputedField(
-    #     name="diff_serious_errors",
-    #     func=lambda data: data[DatasetFields.number_of_serious_errors_post]
-    #     - data[DatasetFields.number_of_serious_errors_pre],
-    # )
-
-    # diff_moderate_errors = ComputedField(
-    #     name="diff_moderate_errors",
-    #     func=lambda data: data[DatasetFields.number_of_moderate_errors_post]
-    #     - data[DatasetFields.number_of_moderate_errors_pre],
-    # )
-
-    # diff_minor_errors = ComputedField(
-    #     name="diff_minor_errors",
-    #     func=lambda data: data[DatasetFields.number_of_minor_errors_post]
-    #     - data[DatasetFields.number_of_minor_errors_pre],
-    # )
-
-    # Averages
-    avg_errors_per_page = ComputedField(
-        name="avg_errors_per_page",
-        func=lambda data: data[DatasetFields.number_of_total_errors]
-        / data[DatasetFields.number_of_pages],
-    )
-
-    # avg_errors_per_page_post = ComputedField(
-    #     name="avg_errors_per_page_post",
-    #     func=lambda data: data[DatasetFields.number_of_total_errors_post]
-    #     / data[DatasetFields.number_of_pages_post],
-    # )
-
-    avg_critical_errors_per_page = ComputedField(
-        name="avg_critical_errors_per_page",
-        func=lambda data: data[DatasetFields.number_of_critical_errors]
-        / data[DatasetFields.number_of_pages],
-    )
-
-    # avg_critical_errors_per_page_post = ComputedField(
-    #     name="avg_critical_errors_per_page_post",
-    #     func=lambda data: data[DatasetFields.number_of_critical_errors_post]
-    #     / data[DatasetFields.number_of_pages_post],
-    # )
-
-    avg_serious_errors_per_page = ComputedField(
-        name="avg_serious_errors_per_page",
-        func=lambda data: data[DatasetFields.number_of_serious_errors]
-        / data[DatasetFields.number_of_pages],
-    )
-
-    # avg_serious_errors_per_page_post = ComputedField(
-    #     name="avg_serious_errors_per_page_post",
-    #     func=lambda data: data[DatasetFields.number_of_serious_errors_post]
-    #     / data[DatasetFields.number_of_pages_post],
-    # )
-
-    avg_moderate_errors_per_page = ComputedField(
-        name="avg_moderate_errors_per_page",
-        func=lambda data: data[DatasetFields.number_of_moderate_errors]
-        / data[DatasetFields.number_of_pages],
-    )
-
-    # avg_moderate_errors_per_page_post = ComputedField(
-    #     name="avg_moderate_errors_per_page_post",
-    #     func=lambda data: data[DatasetFields.number_of_moderate_errors_post]
-    #     / data[DatasetFields.number_of_pages_post],
-    # )
-
-    avg_minor_errors_per_page = ComputedField(
-        name="avg_minor_errors_per_page",
-        func=lambda data: data[DatasetFields.number_of_minor_errors]
-        / data[DatasetFields.number_of_pages],
-    )
-
-    # avg_minor_errors_per_page_post = ComputedField(
-    #     name="avg_minor_errors_per_page_post",
-    #     func=lambda data: data[DatasetFields.number_of_minor_errors_post]
-    #     / data[DatasetFields.number_of_pages_post],
-    # )
-
-    avg_number_of_words_per_page = ComputedField(
-        name="avg_number_of_words_per_page",
-        func=lambda data: data[DatasetFields.number_of_words]
-        / data[DatasetFields.number_of_pages],
-    )
-
-    # Vote share
-    vote_share_per_error = ComputedField(
-        name="vote_share_per_error",
-        func=lambda data: data[DatasetFields.vote_share]
-        / data[DatasetFields.number_of_total_errors],
-    )
-
-    vote_share_per_critical_error = ComputedField(
-        name="vote_share_per_critical_error",
-        func=lambda data: data[DatasetFields.vote_share]
-        / data[DatasetFields.number_of_critical_errors],
-    )
-
-    vote_share_per_serious_error = ComputedField(
-        name="vote_share_per_serious_error",
-        func=lambda data: data[DatasetFields.vote_share]
-        / data[DatasetFields.number_of_serious_errors],
-    )
-
-    vote_share_per_moderate_error = ComputedField(
-        name="vote_share_per_moderate_error",
-        func=lambda data: data[DatasetFields.vote_share]
-        / data[DatasetFields.number_of_moderate_errors],
-    )
-
-    vote_share_per_minor_error = ComputedField(
-        name="vote_share_per_minor_error",
-        func=lambda data: data[DatasetFields.vote_share]
-        / data[DatasetFields.number_of_minor_errors],
-    )
+    Examples
+    --------
+    - "29"
+    - "300"
+    """

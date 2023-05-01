@@ -1,0 +1,1 @@
+Distributions for key content statistics gathered while scraping campaign websites. number_of_total_trackers mean: 33.77, std: 35.31, min: 1, max: 273. behaviour_event_listeners mean: 7.97, std: 6.74, min: 0, max: 34. cookies mean: 5.45, std: 6.73, min: 0, max: 56. third_party_trackers mean: 18.55, std: 24.42, min: 0, max: 208.
