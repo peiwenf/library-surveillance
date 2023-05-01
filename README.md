@@ -22,6 +22,8 @@ If you are interested in running it locally you can clone this repository and fo
 
 Results are stored in `demo-dir` by default
 
+The "generate report" action would do the above steps automatically, and stores the reports in the folder with the input link as the name
+
 ## Collector configuration
 
 `collector` takes the following arguments:
