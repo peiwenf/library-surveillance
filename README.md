@@ -22,7 +22,7 @@ If you are interested in running it locally you can clone this repository and fo
 
 Results are stored in `demo-dir` by default
 
-The "generate report" action would do the above steps automatically, and stores the reports in the folder with the input link as the name
+The "generate report" action would do the above steps automatically, and stores the reports in the folder with the input link as the name. The script "call_action.ipynb" would allow you to generate reports for all links in a data frame at once. If you want to auto download all the reports, remember to delete all the current work flows before you run new ones
 
 ## Collector configuration
 
