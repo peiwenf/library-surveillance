@@ -39,6 +39,6 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ${{ steps.get-clean-url-name.outputs.cleaned }}
-        path: ${{ steps.get-clean-url-name.outputs.cleaned }}.zip
+        path: ${{ steps.get-clean-url-name.outputs.cleaned }}
         # default 90 seems unnecessary for these test results
         retention-days: 14
