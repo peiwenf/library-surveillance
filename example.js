@@ -26,12 +26,12 @@ const { join } = require("path");
   console.log(`For fake captured data please look in ${join(__dirname, cleanUrl)}`)
   const result = await collector(
     OUT_DIR
-      ? { ...defaultConfig, ...{ outDir: cleanUrl } }
+      ? { ...defaultConfig, ...{ outDir: cleanUrl.zip } }
       : defaultConfig
   );
   if (OUT_DIR) {
     console.log(
-      `For captured data please look in ${cleanUrl}`
+      `For captured data please look in ${cleanUrl.zip}`
     );
   }
 })();
