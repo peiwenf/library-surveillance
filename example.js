@@ -12,9 +12,13 @@ const { join } = require("path");
   const inUrl = URL.startsWith("http") ? URL : `https://${URL}`;
   
   let cleanUrl = URL.replace("https://", "").replace("http://", "");
-  if (cleanUrl.endsWith("/")) {
-  cleanUrl = cleanUrl.slice(0, -1);
+  var index = cleanUrl.indexOf("/");
+  if (index !== -1) {
+  cleanUrl = cleanUrl.substring(0, index);
   }
+//   if (cleanUrl.endsWith("/")) {
+//   cleanUrl = cleanUrl.slice(0, -1);
+//   }
 
   const defaultConfig = {
     inUrl,
