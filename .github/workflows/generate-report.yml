@@ -35,10 +35,14 @@ jobs:
       run: |
         node example.js ${{ github.event.inputs.url }}
         
+    - name: Zip Report
+      run: |
+        zip -qq -r ${{ steps.get-clean-url-name.outputs.cleaned }}.zip ${{ steps.get-clean-url-name.outputs.cleaned }}
+        
     - name: Store Report
       uses: actions/upload-artifact@v2
       with:
         name: ${{ steps.get-clean-url-name.outputs.cleaned }}
-        path: ${{ steps.get-clean-url-name.outputs.cleaned }}
+        path: ${{ steps.get-clean-url-name.outputs.cleaned }}.zip
         # default 90 seems unnecessary for these test results
         retention-days: 14
