@@ -10,15 +10,19 @@ const { join } = require("path");
   // The URL to test
   const URL = process.argv[2];
   const inUrl = URL.startsWith("http") ? URL : `https://${URL}`;
+  if (inUrl.endsWith("/")) {
+  inUrl = inUrl.slice(0, -1);
+  }
+  if (inUrl.endsWith("/search")) {
+  // Remove "/search" from the link
+  inUrl = inUrl.slice(0, -"/search".length);
+  }
   
   let cleanUrl = URL.replace("https://", "").replace("http://", "");
   var index = cleanUrl.indexOf("/");
   if (index !== -1) {
   cleanUrl = cleanUrl.substring(0, index);
   }
-//   if (cleanUrl.endsWith("/")) {
-//   cleanUrl = cleanUrl.slice(0, -1);
-//   }
 
   const defaultConfig = {
     inUrl,
