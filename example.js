@@ -9,7 +9,7 @@ const { join } = require("path");
 
   // The URL to test
   const URL = process.argv[2];
-  const inUrl = URL.startsWith("http") ? URL : `https://${URL}`;
+  let inUrl = URL.startsWith("http") ? URL : `https://${URL}`;
   if (inUrl.endsWith("/")) {
   inUrl = inUrl.slice(0, -1);
   }
