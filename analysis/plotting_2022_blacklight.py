@@ -23,220 +23,6 @@ log = logging.getLogger(__name__)
 
 ###############################################################################
 
-
-def plot_computed_fields_over_vote_share(
-    data: Optional[pd.DataFrame] = None,
-    save_path: Optional[Union[str, Path]] = None,
-) -> Path:
-    # Load default data
-    if data is None:
-        data = load_access_eval_2022_dataset()
-
-    # Apply default save path
-    if save_path is None:
-        save_path = PLOTTING_DIR / "vote-share.png"
-
-    # Ensure save path is Path object
-    save_path = Path(save_path).resolve()
-    save_path.parent.mkdir(parents=True, exist_ok=True)
-
-    plot_cols = [
-        DatasetFields.number_of_total_trackers,
-        DatasetFields.behaviour_event_listeners,
-        DatasetFields.cookies,
-        DatasetFields.third_party_trackers,
-    ]
-
-    chart = alt.hconcat(spacing=40)
-    for col in plot_cols:
-        scale=alt.Scale(
-            domain=(
-                data[col].min(),
-                data[col].max(),
-            ),
-            padding=1,
-            )
-        chart |= (
-            alt.Chart(data)
-            .mark_point()
-            .encode(
-                alt.X(f"{DatasetFields.vote_share}:Q",
-                      bin=alt.Bin(maxbins=20)),
-                alt.Y(
-                        col,
-                        scale=scale
-                        # bin=alt.Bin(extent=bins, step=1)
-                    )
-))
-    chart.properties(title="Campaign Website Content")
-
-    # Save fig and text
-    fig_save_path = PLOTTING_DIR / "vote-share.png"
-    fig_save_path.parent.mkdir(parents=True, exist_ok=True)
-    chart.save(str(fig_save_path))
-    return fig_save_path
-
-def plot_computed_fields_over_vote_share_distance(
-    data: Optional[pd.DataFrame] = None,
-    save_path: Optional[Union[str, Path]] = None,
-) -> Path:
-    # Load default data
-    if data is None:
-        data = load_access_eval_2022_dataset()
-
-    plot_cols = [
-        DatasetFields.number_of_total_trackers,
-        DatasetFields.behaviour_event_listeners,
-        DatasetFields.cookies,
-        DatasetFields.third_party_trackers,
-    ]
-
-    chart = alt.hconcat(spacing=40)
-    for col in plot_cols:
-        scale = alt.Scale(
-            domain=(
-                data[col].min(),
-                data[col].max(),
-            ),
-            padding=1,
-            )
-        chart |= (
-            alt.Chart(data)
-            .mark_point()
-            .encode(
-                alt.X(f"{DatasetFields.competitiveness}:Q",
-                      bin=alt.Bin(maxbins=20)),
-                alt.Y(
-                        col,
-                        scale=scale
-                    )
-))
-    chart.properties(title="Campaign Website Content")
-
-    # Save fig and text
-    fig_save_path = PLOTTING_DIR / "competitiveness.png"
-    fig_save_path.parent.mkdir(parents=True, exist_ok=True)
-    chart.save(str(fig_save_path))
-    return fig_save_path
-
-def plot_categorical_against_errors_boxplots(
-    data: Optional[pd.DataFrame] = None,
-) -> List[Path]:
-    """
-    Input data should be the "flattened" dataset.
-    """
-    # Load default data
-    if data is None:
-        data = load_access_eval_2022_dataset()
-
-    # Set of categorical variables to use for box plot generation
-    categorical_variables = [
-        DatasetFields.electoral_level,
-        DatasetFields.electoral_branch,
-        DatasetFields.election_result,
-        DatasetFields.electoral_level_3
-    ]
-    save_paths = []
-    for cat_var in categorical_variables:
-        # Break down the categorical variable into all errors and subsets of error type
-        if cat_var == DatasetFields.election_result:
-            data = data.dropna(axis=0, subset=['election_result'])
-        error_types = alt.hconcat()
-        for err in [
-            DatasetFields.number_of_total_trackers,
-            DatasetFields.behaviour_event_listeners,
-            DatasetFields.cookies,
-            DatasetFields.third_party_trackers,
-        ]:
-            feature_name = err
-            plot_scale = alt.Scale(
-            domain=(
-                data[feature_name].min(),
-                data[feature_name].max(),
-            ),
-            padding=1,
-            )
-            error_types |= (
-                alt.Chart(data)
-                .mark_boxplot(ticks=True)
-                .encode(
-                    y=alt.Y(
-                        f"{feature_name}:Q",
-                        scale=plot_scale,
-                    ),
-                    column=alt.Column(
-                        f"{cat_var}:N", spacing=40, header=alt.Header(orient="bottom")
-                    ),
-                )
-            )
-        save_path = PLOTTING_DIR / f"{cat_var}-sentiment-split.png"
-        save_path.parent.mkdir(parents=True, exist_ok=True)
-        error_types.save(str(save_path))
-        save_paths.append(save_path)
-
-    return save_paths
-
-
-def plot_locations_against_errors_boxplots(
-    data: Optional[pd.DataFrame] = None,
-) -> Path:
-    """
-    Input data should be the "flattened" dataset.
-    """
-    # Load default data
-    if data is None:
-        data = load_access_eval_2022_dataset()
-
-    location_counts = data[DatasetFields.state].value_counts()
-    top_5_locations = location_counts.nlargest(5).index
-    data = data[data[DatasetFields.location].isin(top_5_locations)]
-
-    location_plots = alt.vconcat()
-
-    for location in data[DatasetFields.location].unique():
-        location_subset = data.loc[data[DatasetFields.location] == location]
-
-        if len(location_subset) > 4:
-            error_types = alt.hconcat()
-            for err in [
-                DatasetFields.number_of_total_trackers,
-                DatasetFields.behaviour_event_listeners,
-                DatasetFields.cookies,
-                DatasetFields.third_party_trackers,
-            ]:
-                feature_name = err
-
-                plot_scale = alt.Scale(
-                domain=(
-                    data[feature_name].min(),
-                    data[feature_name].max(),
-                ),
-                padding=1,
-                )
-                error_types |= (
-                    alt.Chart(location_subset)
-                    .mark_boxplot(ticks=True)
-                    .encode(
-                        y=alt.Y(
-                            f"{feature_name}:Q",
-                            scale=plot_scale,
-                        ),
-                        column=alt.Column(
-                            f"{DatasetFields.candidate_position}:N",
-                            spacing=60,
-                            header=alt.Header(orient="bottom"),
-                        ),
-                    )
-                )
-
-            location_plots &= error_types
-
-    save_path = PLOTTING_DIR / "location-sentiment-split.png"
-    save_path.parent.mkdir(parents=True, exist_ok=True)
-    location_plots.save(str(save_path))
-
-    return save_path
-
 def _plot_and_fig_text(
     data: pd.DataFrame,
     plot_cols: List[str],
@@ -249,11 +35,15 @@ def _plot_and_fig_text(
     chart = alt.hconcat(spacing=40)
     for col in plot_cols:
         scale = alt.Scale(
+            # domain=(
+            #     data[col].min(),
+            #     data[col].max(),
+            # ),
             domain=(
-                data[col].min(),
-                data[col].max(),
+                0,
+                250,
             ),
-            padding=1,
+            # padding=1,
             )
 
         if column is None:
@@ -285,6 +75,8 @@ def _plot_and_fig_text(
             f"std: {round(data[col].std(), 2)}, "
             f"min: {round(data[col].min(), 2)}, "
             f"max: {round(data[col].max(), 2)}."
+            f"median: {round(data[col].median(), 2)}."
+            f"major: {round(data[col].quantile([0.25, 0.75]), 2)}."
         )
     chart.properties(title="Campaign Website Content")
 
@@ -295,6 +87,78 @@ def _plot_and_fig_text(
     with open(fig_save_path.with_suffix(".txt"), "w") as open_f:
         open_f.write(fig_text_prefix)
 
+
+def plot_homepage_stats(
+    data: Optional[pd.DataFrame] = None,
+    subset_name: str = "",
+    keep_cols: List[str] = [],
+    plot_kwargs: Dict[str, Any] = {},
+) -> None:
+    """
+    Input data should be the "flattened" dataset.
+    """
+    # Load default data
+    if data is None:
+        data = load_access_eval_2022_dataset()
+
+    score_cols = [
+        DatasetFields.number_of_total_trackers_homepage,
+        DatasetFields.behaviour_event_listeners_homepage,
+        DatasetFields.cookies_homepage,
+        DatasetFields.third_party_trackers_homepage,
+        DatasetFields.canvas_fingerprinters_homepage,
+        DatasetFields.canvas_font_fingerprinters_homepage,
+        DatasetFields.key_logging_homepage,
+        DatasetFields.session_recorders_homepage,
+    ]
+
+    # Create content plots
+    _plot_and_fig_text(
+        data=data[[*score_cols, *keep_cols]],
+        plot_cols=score_cols,
+        fig_text_prefix=(
+            "Distributions for key content statistics "
+            "gathered while scraping campaign websites."
+        ),
+        subset_name=f"homepage-content-stats",
+        **plot_kwargs,
+    )
+
+def plot_catalog_stats(
+    data: Optional[pd.DataFrame] = None,
+    subset_name: str = "",
+    keep_cols: List[str] = [],
+    plot_kwargs: Dict[str, Any] = {},
+) -> None:
+    """
+    Input data should be the "flattened" dataset.
+    """
+    # Load default data
+    if data is None:
+        data = load_access_eval_2022_dataset()
+
+    score_cols = [
+        DatasetFields.number_of_total_trackers_catalog,
+        DatasetFields.behaviour_event_listeners_catalog,
+        DatasetFields.cookies_catalog,
+        DatasetFields.third_party_trackers_catalog,
+        DatasetFields.canvas_fingerprinters_catalog,
+        DatasetFields.canvas_font_fingerprinters_catalog,
+        DatasetFields.key_logging_catalog,
+        DatasetFields.session_recorders_catalog,
+    ]
+
+    # Create content plots
+    _plot_and_fig_text(
+        data=data[[*score_cols, *keep_cols]],
+        plot_cols=score_cols,
+        fig_text_prefix=(
+            "Distributions for key content statistics "
+            "gathered while scraping campaign websites."
+        ),
+        subset_name=f"catalog-content-stats",
+        **plot_kwargs,
+    )
 
 def plot_summary_stats(
     data: Optional[pd.DataFrame] = None,
@@ -310,10 +174,8 @@ def plot_summary_stats(
         data = load_access_eval_2022_dataset()
 
     score_cols = [
-        DatasetFields.number_of_total_trackers,
-        DatasetFields.behaviour_event_listeners,
-        DatasetFields.cookies,
-        DatasetFields.third_party_trackers,
+        DatasetFields.number_of_total_trackers_homepage,
+        DatasetFields.number_of_total_trackers_catalog,
     ]
 
     # Create content plots
@@ -329,12 +191,10 @@ def plot_summary_stats(
     )
 
 
-def plot_location_based_summary_stats(
+def plot_state_based_summary_stats(
     data: Optional[pd.DataFrame] = None,
 ) -> None:
-    """
-    Input data should be the "flattened" dataset.
-    """
+    
     # Load default data
     if data is None:
         data = load_access_eval_2022_dataset()
@@ -354,160 +214,69 @@ def plot_location_based_summary_stats(
     )
 
 
-def plot_party_based_summary_stats(
+def plot_automation_based_summary_stats(
     data: Optional[pd.DataFrame] = None,
 ) -> None:
-    """
-    Input data should be the "flattened" dataset.
-    """
+
     # Load default data
     if data is None:
         data = load_access_eval_2022_dataset()
 
-    location_counts = data[DatasetFields.party].value_counts()
+    location_counts = data[DatasetFields.current_automation].value_counts()
     top_5_locations = location_counts.nlargest(5).index
-    data = data[data[DatasetFields.party].isin(top_5_locations)]
+    data = data[data[DatasetFields.current_automation].isin(top_5_locations)]
 
     # Plot basic stats
     plot_summary_stats(
         data,
-        subset_name="election-party-split-",
-        keep_cols=[DatasetFields.party],
-        plot_kwargs={"column": alt.Column(DatasetFields.party, spacing=40)},
+        subset_name="current-automation-split-",
+        keep_cols=[DatasetFields.current_automation],
+        plot_kwargs={"column": alt.Column(DatasetFields.current_automation, spacing=60)},
     )
 
 
-def plot_electoral_position_based_summary_stats(
+def plot_interface_based_summary_stats(
     data: Optional[pd.DataFrame] = None,
 ) -> None:
-    """
-    Input data should be the "flattened" dataset.
-    """
+    
     # Load default data
     if data is None:
         data = load_access_eval_2022_dataset()
 
-    location_counts = data[DatasetFields.electoral_position].value_counts()
+    location_counts = data[DatasetFields.discovery_interface].value_counts()
     top_5_locations = location_counts.nlargest(5).index
     log.info(top_5_locations)
-    data = data[data[DatasetFields.electoral_position].isin(top_5_locations)]
+    data = data[data[DatasetFields.discovery_interface].isin(top_5_locations)]
 
     # Plot basic stats
     plot_summary_stats(
         data,
-        subset_name="election-position-split-",
-        keep_cols=[DatasetFields.electoral_position],
+        subset_name="discovery-interface-split-",
+        keep_cols=[DatasetFields.discovery_interface],
         plot_kwargs={
-            "column": alt.Column(DatasetFields.electoral_position, spacing=40)
+            "column": alt.Column(DatasetFields.discovery_interface, spacing=60)
         },
     )
 
-def plot_electoral_level_against_vote_share(
+def plot_ID_based_summary_stats(
     data: Optional[pd.DataFrame] = None,
-) -> Path:
-    """
-    Input data should be the "flattened" dataset.
-    """
+) -> None:
+    
     # Load default data
     if data is None:
         data = load_access_eval_2022_dataset()
 
-    location_plots = alt.vconcat()
+    location_counts = data[DatasetFields.item_ID].value_counts()
+    top_5_locations = location_counts.nlargest(5).index
+    log.info(top_5_locations)
+    data = data[data[DatasetFields.item_ID].isin(top_5_locations)]
 
-    for level in data[DatasetFields.electoral_level].unique():
-        level_subset = data.loc[data[DatasetFields.electoral_level] == level]
-
-        error_types = alt.hconcat()
-        for err in [
-            DatasetFields.number_of_total_trackers,
-            DatasetFields.behaviour_event_listeners,
-            DatasetFields.cookies,
-            DatasetFields.third_party_trackers,
-        ]:
-            feature_name = err
-            plot_scale = alt.Scale(
-            domain=(
-                data[feature_name].min(),
-                data[feature_name].max(),
-            ),
-            padding=1,
-            )
-            error_types |= (
-                alt.Chart(level_subset)
-                .mark_point()
-                .encode(
-                    x=alt.X(
-                        f"{DatasetFields.vote_share}:Q",
-                        scale = alt.Scale(
-        domain=[0, 1],
-    )),
-                    y=alt.Y(
-                        f"{feature_name}:Q",
-                        scale=plot_scale,
-                    ),
-                ).properties(
-                    title = f"{level}"
-                )
-            )
-        location_plots &= error_types
-
-    save_path = PLOTTING_DIR / "level-sentiment-split.png"
-    save_path.parent.mkdir(parents=True, exist_ok=True)
-    location_plots.save(str(save_path))
-
-    return save_path
-
-def plot_electoral_branch_against_vote_share(
-    data: Optional[pd.DataFrame] = None,
-) -> Path:
-    """
-    Input data should be the "flattened" dataset.
-    """
-    # Load default data
-    if data is None:
-        data = load_access_eval_2022_dataset()
-
-    location_plots = alt.vconcat()
-
-    for level in data[DatasetFields.electoral_branch].unique():
-        level_subset = data.loc[data[DatasetFields.electoral_branch] == level]
-
-        error_types = alt.hconcat()
-        for err in [
-            DatasetFields.number_of_total_trackers,
-            DatasetFields.behaviour_event_listeners,
-            DatasetFields.cookies,
-            DatasetFields.third_party_trackers,
-        ]:
-            feature_name = err
-            plot_scale = alt.Scale(
-            domain=(
-                data[feature_name].min(),
-                data[feature_name].max(),
-            ),
-            padding=1,
-            )
-            error_types |= (
-                alt.Chart(level_subset)
-                .mark_point()
-                .encode(
-                    x=alt.X(
-                        f"{DatasetFields.vote_share}:Q",
-                        scale = alt.Scale(
-        domain=[0, 1],
-    )),
-                    y=alt.Y(
-                        f"{feature_name}:Q",
-                        scale=plot_scale,
-                    ),
-                ).properties(
-                    title = f"{level}"
-                )
-            )
-        location_plots &= error_types
-
-    save_path = PLOTTING_DIR / "branch-sentiment-split.png"
-    save_path.parent.mkdir(parents=True, exist_ok=True)
-    location_plots.save(str(save_path))
-
-    return save_path
+    # Plot basic stats
+    plot_summary_stats(
+        data,
+        subset_name="item-ID-split-",
+        keep_cols=[DatasetFields.item_ID],
+        plot_kwargs={
+            "column": alt.Column(DatasetFields.item_ID, spacing=60)
+        },
+    )

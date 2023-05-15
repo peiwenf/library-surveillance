@@ -8,9 +8,8 @@ import sys
 import traceback
 from shutil import rmtree
 
-import plotting_2022_third_party
+import plotting_2022_blacklight
 from core_2022 import (
-    get_crucial_stats,
     load_access_eval_2022_dataset,
 )
 
@@ -59,20 +58,18 @@ def main() -> None:
         data = load_access_eval_2022_dataset()
 
         # Clear prior plots
-        if plotting_2022_third_party.PLOTTING_DIR.exists():
-            rmtree(plotting_2022_third_party.PLOTTING_DIR)
+        if plotting_2022_blacklight.PLOTTING_DIR.exists():
+            rmtree(plotting_2022_blacklight.PLOTTING_DIR)
 
         # Generate plots
         log.info("Generating plots used in paper...")
-        plotting_2022_third_party.plot_computed_fields_over_vote_share(data)
-        plotting_2022_third_party.plot_computed_fields_over_vote_share_distance(data)
-        plotting_2022_third_party.plot_summary_stats(data)
-        plotting_2022_third_party.plot_location_based_summary_stats(data)
-        plotting_2022_third_party.plot_party_based_summary_stats(data)
-        plotting_2022_third_party.plot_electoral_position_based_summary_stats(data)
-        plotting_2022_third_party.plot_categorical_against_errors_boxplots(data)
-        plotting_2022_third_party.plot_electoral_level_against_vote_share(data)
-        plotting_2022_third_party.plot_electoral_branch_against_vote_share(data)
+        plotting_2022_blacklight.plot_homepage_stats(data)
+        plotting_2022_blacklight.plot_catalog_stats(data)
+        plotting_2022_blacklight.plot_summary_stats(data)
+        plotting_2022_blacklight.plot_state_based_summary_stats(data)
+        plotting_2022_blacklight.plot_automation_based_summary_stats(data)
+        plotting_2022_blacklight.plot_interface_based_summary_stats(data)
+        plotting_2022_blacklight.plot_ID_based_summary_stats(data)
 
     except Exception as e:
         log.error("=============================================")

@@ -12,10 +12,6 @@ import numpy as np
 import pandas as pd
 from dataclasses_json import dataclass_json
 from scipy import stats as sci_stats
-from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
-from selenium.webdriver import FirefoxOptions
-from textstat import flesch_reading_ease
 from tqdm import tqdm
 
 from constants import SINGLE_PAGE_AXE_RESULTS_FILENAME
@@ -121,6 +117,12 @@ def _recurse_axe_results(
                     "google_analytics",
                     current_count + 1,
                 )
+                current_count = getattr(metrics, "google")
+                setattr(
+                    metrics,
+                    "google",
+                    current_count + 1,
+                )
             elif "google" in this_dir_loaded_results['reports']["third_party_trackers"][i]['url']:
                 current_count = getattr(metrics, "google")
                 setattr(
@@ -186,14 +188,11 @@ def _convert_metrics_to_expanded_data(
 ) -> Dict[str, int]:
 
     return {
-        **track_types,
-        f"number_of_pages": metrics.pages,
         f"number_of_total_trackers": (
             metrics.behaviour_event_listeners
             + metrics.canvas_fingerprinters
             + metrics.canvas_font_fingerprinters
             + metrics.cookies
-            + metrics.fb_pixel_events
             + metrics.key_logging
             + metrics.session_recorders
             + metrics.third_party_trackers
@@ -212,57 +211,54 @@ def _convert_metrics_to_expanded_data(
     }
 
 
-def combine_election_data_with_axe_results(
-    election_data: Union[str, Path, pd.DataFrame],
-    axe_scraping_results: Union[str, Path],
+def combine_library_data_with_axe_results(
+    library_data: Union[str, Path, pd.DataFrame],
+    lib_scraping_results: Union[str, Path],
 ) -> pd.DataFrame:
     """
-    Combine election data CSV (or in memory DataFrame) with the blacklight results for each
-    campaign website.
+    Combine library data CSV (or in memory DataFrame) with the blacklight results for each
+    library website.
 
     Parameters
     ----------
-    election_data: Union[str, Path, pd.DataFrame]
-        The path to, or the in-memory dataframe, containing basic election data.
-        This CSV or dataframe should contain a column "campaign_website_url"
-        that can be used to find the associated directory of axe results for that
-        campaigns website.
-    axe_scraping_results: Union[str, Path]
-        The path to the directory that contains sub-directories for each campaign
+    library_data: Union[str, Path, pd.DataFrame]
+        The path to, or the in-memory dataframe, containing basic library data.
+        This CSV or dataframe should contain two columns "Homepage" and "Catalog"
+        that can be used to find the associated directory of blacklight results for that
+        library.
+    lib_scraping_results: Union[str, Path]
+        The path to the directory that contains sub-directories for each library
         website's blacklight results. 
 
     Returns
     -------
     full_data: pd.DataFrame
-        The original election data, the summed trackers counts for each campaign
+        The original library data, the summed trackers counts for each library
         website combined into a single dataframe.
-
-    Additionally, if the provided campaign website url is missing, the site is
-    skipped / dropped from the expanded dataset.
 
     Finally, any `https://` or `http://` is dropped from the campaign url.
     I.e. in the spreadsheet the value is `https://website.org` but the associated
     directory should be: `data/website.org`
     """
     # Confirm paths
-    axe_scraping_results = Path(axe_scraping_results).resolve(
+    lib_scraping_results = Path(lib_scraping_results).resolve(
         strict=True
     )
 
-    if isinstance(election_data, (str, Path)):
-        election_data = Path(election_data).resolve(strict=True)
-        election_data = pd.read_csv(election_data)
+    if isinstance(library_data, (str, Path)):
+        library_data = Path(library_data).resolve(strict=True)
+        library_data = pd.read_csv(library_data)
 
     # Confirm axe scraping results is dir
-    if not axe_scraping_results.is_dir():
-        raise NotADirectoryError(axe_scraping_results)
+    if not lib_scraping_results.is_dir():
+        raise NotADirectoryError(lib_scraping_results)
 
     # Iter election data and create List of expanded dicts with added
     expanded_data = []
-    for _, row in tqdm(election_data.iterrows()):
-        if isinstance(row[DatasetFields.campaign_website_url], str):
-            cleaned_url = clean_url(row[DatasetFields.campaign_website_url])
-            access_eval = axe_scraping_results / cleaned_url
+    for _, row in tqdm(library_data.iterrows()):
+        if isinstance(row[DatasetFields.catalog_url], str):
+            cleaned_url = clean_url(row[DatasetFields.catalog_url])
+            access_eval = lib_scraping_results / cleaned_url
         else:
             access_eval = None
 
@@ -285,7 +281,7 @@ def combine_election_data_with_axe_results(
                 }
             )
         else:
-            row.campaign_website_url = None
+            row.catalog_url = None
             expanded_data.append(
                 {
                     # Original row details with unworking links removed
@@ -294,7 +290,7 @@ def combine_election_data_with_axe_results(
             )
 
     log.info(
-        f"Dropped {len(election_data) - len(expanded_data)} rows from dataset "
+        f"Dropped {len(library_data) - len(expanded_data)} rows from dataset "
         f"because they were missing a result directory."
     )
     return pd.DataFrame(expanded_data)
@@ -346,57 +342,3 @@ def load_access_eval_2022_dataset(
         data[avg_error_type_col_name] = data[common_error_col] / data[norm_col]
 
     return data
-
-def get_crucial_stats(
-    data: Optional[pd.DataFrame] = None,
-) -> Dict[str, Any]:
-    """
-    Generate statistics we found useful in the 2022 paper.
-    """
-    # Load default data
-    if data is None:
-        data = load_access_eval_2022_dataset()
-
-    # Generate demographics and tables
-    with open("overall-stats.txt", "w") as open_f:
-        open_f.write(
-            data[[ num_pages_col, avg_errs_per_page_col]]
-            .agg([np.mean, np.std])
-            .to_latex()
-        )
-
-    print("Number of sites for this run:", len(data))
-
-    # Get majority of ease of reading
-    stats["majority trackers"] = data[DatasetFields.number_of_total_trackers].quantile(
-        [0.25, 0.75]
-    )
-    stats["trackers | mean and std"] = {
-        "mean": data[DatasetFields.number_of_total_trackers].mean(),
-        "std": data[DatasetFields.number_of_total_trackers].std(),
-    }
-
-    # Get trends for election outcome
-    winning_races = data[data[DatasetFields.election_result] == "Won"]
-    losing_races = data[data[DatasetFields.election_result] == "Lost"]
-    stats["win vs lose | tackers"] = sci_stats.ttest_ind(
-        winning_races[number_of_total_trackers],
-        losing_races[number_of_total_trackers],
-        equal_var=False,
-    )
-
-    # Clean stats
-    for k, v in stats.items():
-        if isinstance(
-            v,
-            (
-                sci_stats.stats.Ttest_indResult,
-                sci_stats.stats.F_onewayResult,
-                sci_stats.stats.Ttest_relResult,
-            ),
-        ):
-            stats[k] = {"statistic": v.statistic, "pvalue": v.pvalue}
-        elif isinstance(v, pd.Series):
-            stats[k] = v.tolist()
-
-    return stats
