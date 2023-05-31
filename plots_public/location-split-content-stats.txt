@@ -1,0 +1,5 @@
+Distributions for key content statistics gathered while scraping campaign websites. number_of_total_trackers_homepage mean: 34.28, std: 39.25, min: 0.0, max: 588.0.median: 25.0.major: 0.25    13.0
+0.75    48.0
+Name: number_of_total_trackers_homepage, dtype: float64. number_of_total_trackers_catalog mean: 11.03, std: 15.98, min: 0.0, max: 121.0.median: 3.0.major: 0.25     0.0
+0.75    15.0
+Name: number_of_total_trackers_catalog, dtype: float64.

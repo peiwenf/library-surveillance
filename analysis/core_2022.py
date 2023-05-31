@@ -150,8 +150,8 @@ def process_axe_evaluations_and_extras(
     Parameters
     ----------
     axe_results_dir: Union[str, Path]
-        The directory for a specific website that has been processed using the access
-        eval scraper.
+        The directory for a specific website that has been processed using the blacklight
+        scraper.
 
     Returns
     -------

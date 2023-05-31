@@ -1,0 +1,17 @@
+Distributions for key content statistics gathered while scraping campaign websites. number_of_total_trackers_homepage mean: 38.6, std: 49.61, min: 0.0, max: 588.0.median: 27.0.major: 0.25    13.0
+0.75    50.0
+Name: number_of_total_trackers_homepage, dtype: float64. behaviour_event_listeners_homepage mean: 6.82, std: 6.04, min: 0.0, max: 44.0.median: 5.0.major: 0.25     3.0
+0.75    10.0
+Name: behaviour_event_listeners_homepage, dtype: float64. cookies_homepage mean: 7.48, std: 17.09, min: 0.0, max: 214.0.median: 4.0.major: 0.25    2.0
+0.75    7.0
+Name: cookies_homepage, dtype: float64. third_party_trackers_homepage mean: 22.86, std: 32.51, min: 0.0, max: 430.0.median: 15.0.major: 0.25     5.0
+0.75    30.0
+Name: third_party_trackers_homepage, dtype: float64. canvas_fingerprinters_homepage mean: 1.4, std: 1.91, min: 0.0, max: 12.0.median: 0.0.major: 0.25    0.0
+0.75    4.0
+Name: canvas_fingerprinters_homepage, dtype: float64. canvas_font_fingerprinters_homepage mean: 0.01, std: 0.11, min: 0.0, max: 3.0.median: 0.0.major: 0.25    0.0
+0.75    0.0
+Name: canvas_font_fingerprinters_homepage, dtype: float64. key_logging_homepage mean: 0.01, std: 0.11, min: 0.0, max: 2.0.median: 0.0.major: 0.25    0.0
+0.75    0.0
+Name: key_logging_homepage, dtype: float64. session_recorders_homepage mean: 0.02, std: 0.19, min: 0.0, max: 2.0.median: 0.0.major: 0.25    0.0
+0.75    0.0
+Name: session_recorders_homepage, dtype: float64.

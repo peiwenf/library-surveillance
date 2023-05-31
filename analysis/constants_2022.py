@@ -10,14 +10,14 @@ from typing import Callable, NamedTuple
 ACCESS_EVAL_2022_STUDY_REPORTS = Path(__file__).parent / "reports_2022"
 ACCESS_EVAL_2022_STUDY_DATA = Path(__file__).parent / "data_2022"
 
-ACCESS_EVAL_2022_ELECTION_RESULTS = ACCESS_EVAL_2022_STUDY_DATA / "homepage_tracker.csv"
+ACCESS_EVAL_2022_ELECTION_RESULTS = ACCESS_EVAL_2022_STUDY_DATA / "public_lib_purpose.csv"
 ACCESS_EVAL_2022_EVALS_ZIP = (
-    ACCESS_EVAL_2022_STUDY_REPORTS / "catalog.zip"
+    ACCESS_EVAL_2022_STUDY_REPORTS / "Homepage.zip"
 )
 
 ACCESS_EVAL_2022_EVALS_UNPACKED = Path("unpacked-eval-results")
 
-ACCESS_EVAL_2022_DATASET = ACCESS_EVAL_2022_STUDY_DATA / "library_tracker.csv"
+ACCESS_EVAL_2022_DATASET = ACCESS_EVAL_2022_STUDY_DATA / "public_lib_purpose_total.csv"
 ###############################################################################
 
 
@@ -64,7 +64,7 @@ class DatasetFields:
     - "https://www.google.com"
     - "https://jacksonmaxfield.github.io"
     """
-    
+
     number_of_total_trackers_homepage = "number_of_total_trackers_homepage"
     number_of_total_trackers_catalog = "number_of_total_trackers_catalog"
     """
@@ -123,6 +123,7 @@ class DatasetFields:
     current_automation = "Current Automation System Name"
     discovery_interface = "Discovery Interface Name"
     item_ID = "Item ID Type Name"
+    web_content = "Web Content Magement Name"
 
     """
     str: The vendors for the most frequently used technologies

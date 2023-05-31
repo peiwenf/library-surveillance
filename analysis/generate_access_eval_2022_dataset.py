@@ -6,7 +6,7 @@ import sys
 import traceback
 
 import constants_2022
-from core_2022 import combine_election_data_with_axe_results
+from disconnect import combine_library_data_with_axe_results
 from utils_2022 import unpack_data
 
 ###############################################################################
@@ -50,7 +50,7 @@ def main() -> None:
         )
 
         # Combine
-        expanded_data = combine_election_data_with_axe_results(
+        expanded_data = combine_library_data_with_axe_results(
             constants_2022.ACCESS_EVAL_2022_ELECTION_RESULTS,
             eval_data,
         )

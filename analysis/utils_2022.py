@@ -22,7 +22,7 @@ def unpack_data(
     ----------
     zipfile: Union[str, Path]
         The zipfile to unpack.
-        Default: The 2021 campaign accessibility evaluation pre-contact data.
+        Default: The library tracking data.
     dest: Union[str, Path]
         The destination to unpack to.
         Default: The default location for unpacked "pre-contact" data.

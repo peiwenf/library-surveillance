@@ -63,13 +63,14 @@ def main() -> None:
 
         # Generate plots
         log.info("Generating plots used in paper...")
-        plotting_2022_blacklight.plot_homepage_stats(data)
-        plotting_2022_blacklight.plot_catalog_stats(data)
-        plotting_2022_blacklight.plot_summary_stats(data)
-        plotting_2022_blacklight.plot_state_based_summary_stats(data)
-        plotting_2022_blacklight.plot_automation_based_summary_stats(data)
-        plotting_2022_blacklight.plot_interface_based_summary_stats(data)
-        plotting_2022_blacklight.plot_ID_based_summary_stats(data)
+        # plotting_2022_blacklight.plot_homepage_stats(data)
+        # plotting_2022_blacklight.plot_catalog_stats(data)
+        # plotting_2022_blacklight.plot_summary_stats(data)
+        # plotting_2022_blacklight.plot_state_based_summary_stats(data)
+        # plotting_2022_blacklight.plot_automation_based_summary_stats(data)
+        # plotting_2022_blacklight.plot_interface_based_summary_stats(data)
+        # plotting_2022_blacklight.plot_ID_based_summary_stats(data)
+        plotting_2022_blacklight.plot_content_based_summary_stats(data)
 
     except Exception as e:
         log.error("=============================================")

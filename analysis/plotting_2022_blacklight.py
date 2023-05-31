@@ -35,14 +35,14 @@ def _plot_and_fig_text(
     chart = alt.hconcat(spacing=40)
     for col in plot_cols:
         scale = alt.Scale(
-            # domain=(
-            #     data[col].min(),
-            #     data[col].max(),
-            # ),
             domain=(
-                0,
-                250,
+                data[col].min(),
+                data[col].max(),
             ),
+            # domain=(
+            #     0,
+            #     250,
+            # ),
             # padding=1,
             )
 
@@ -275,6 +275,29 @@ def plot_ID_based_summary_stats(
     plot_summary_stats(
         data,
         subset_name="item-ID-split-",
+        keep_cols=[DatasetFields.item_ID],
+        plot_kwargs={
+            "column": alt.Column(DatasetFields.item_ID, spacing=60)
+        },
+    )
+
+def plot_content_based_summary_stats(
+    data: Optional[pd.DataFrame] = None,
+) -> None:
+    
+    # Load default data
+    if data is None:
+        data = load_access_eval_2022_dataset()
+
+    location_counts = data[DatasetFields.web_content].value_counts()
+    top_5_locations = location_counts.nlargest(5).index
+    log.info(top_5_locations)
+    data = data[data[DatasetFields.item_ID].isin(top_5_locations)]
+
+    # Plot basic stats
+    plot_summary_stats(
+        data,
+        subset_name="web-content-split-",
         keep_cols=[DatasetFields.item_ID],
         plot_kwargs={
             "column": alt.Column(DatasetFields.item_ID, spacing=60)
